@@ -1,5 +1,7 @@
-Flask==2.2.3
-google-generativeai
-gunicorn==20.0.4
-grpcio
-Werkzeug==2.2.3
+Flask==2.3.3
+Werkzeug==2.3.7
+gunicorn==21.2.0
+google-generativeai==0.6.0
+grpcio==1.62.2
+protobuf==5.28.0
+requests==2.32.4

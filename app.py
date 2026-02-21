@@ -1,37 +1,40 @@
 from flask import Flask, render_template, request, redirect, url_for
 import google.generativeai as genai
-
-model = genai.GenerativeModel('gemini-pro')
-
 import os
-my_api_key_gemini = os.getenv('my_new_api_key_here')
 
-genai.configure(api_key=my_api_key_gemini)
+# Configure API Key
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+# Use latest Gemini model
+model = genai.GenerativeModel("gemini-2.5-flash")
 
 app = Flask(__name__)
 
-# Define your 404 error handler to redirect to the index page
+# 404 error handler
 @app.errorhandler(404)
 def page_not_found(e):
     return redirect(url_for('index'))
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route("/", methods=["GET", "POST"])
 def index():
-    if request.method == 'POST':
+    if request.method == "POST":
         try:
-            prompt = request.form['prompt']
-            question = prompt
+            prompt = request.form.get("prompt")
 
-            response = model.generate_content(question)
+            if not prompt:
+                return "Please enter a prompt."
 
-            if response.text:
+            response = model.generate_content(prompt)
+
+            if response and response.text:
                 return response.text
             else:
-                return "Sorry, but I think Gemini didn't want to answer that!"
+                return "Gemini did not return a response."
+
         except Exception as e:
-            return "Sorry, but Gemini didn't want to answer that!"
+            return f"Error: {str(e)}"
 
-    return render_template('index.html', **locals())
+    return render_template("index.html")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
